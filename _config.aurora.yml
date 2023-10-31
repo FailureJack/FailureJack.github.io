@@ -9,24 +9,24 @@
 #！ @docs https://aurora.tridiamond.tech/guide/configuration.html
 #! ---------------------------------------------------------------
 site:
-  subtitle: Aurora's Blog
-  author: Aurora
-  nick: Auroral UI
-  description:
+  subtitle: Lucas' Blog
+  author: Lucas Zhang
+  nick: Failurer
+  description: Over The Hill.
   link: '/'
-  language: en
+  language: cn
   multi_language: true
-  logo:
-  avatar:
+  logo: /img/avatar.png
+  avatar: /img/refrain.jpg
   beian:
-    number: ''
-    link: ''
+    number: '114514'
+    link: 'https://beian.miit.gov.cn/'
   police_beian:
-    number: ''
-    link: ''
+    number: '1919810'
+    link: 'https://beian.miit.gov.cn/'
   # Start date of the blog YYY-MM-DD
   # 博客开始运行日期
-  started_date:
+  started_date: 2023-10-30
   # Path unique identifier (文章 URL 唯一标识)
   # uid: use unique ID
   # slug: use generated slug base on title
@@ -37,15 +37,15 @@ site:
 #! Authors Configs
 #！ @docs https://aurora.tridiamond.tech/guide/authors.html
 #! ---------------------------------------------------------------
-authors:
-  ##! example
-  # TriDiamond:
-  #   name: TriDiamond
-  #   avatar: https://up.enterdesk.com/edpic_source/44/ff/3d/44ff3d6bd2819d524facfcc33205d4cd.jpg
-  #   link: https://github.com/TriDiamond
-  #   description: 'Think like an artist, code like an artisan.'
-  #   socials:
-  #     github: https://tridiamond.tech
+# authors:
+#   ##! example
+#   TriDiamond:
+#     name: TriDiamond
+#     avatar: https://up.enterdesk.com/edpic_source/44/ff/3d/44ff3d6bd2819d524facfcc33205d4cd.jpg
+#     link: https://github.com/TriDiamond
+#     description: 'Think like an artist, code like an artisan.'
+#     socials:
+#       github: https://tridiamond.tech
 
 #! ---------------------------------------------------------------
 #! Menu Configs
@@ -55,7 +55,8 @@ menu:
   About: true
   Tags: true
   Archives: true
-  Friends: false
+  Friends: true
+  Links: true
 
   contact:
     name: 'Contact'
@@ -70,34 +71,41 @@ menu:
 #! ---------------------------------------------------------------
 theme:
   dark_mode: true
-  profile_shape: diamond # support `circle`, `diamond`, `rounded`
+  profile_shape: rounded # support `circle`, `diamond`, `rounded`
   feature: true
   gradient:
-    color_1: '#24c6dc'
-    color_2: '#5433ff'
-    color_3: '#ff0099'
+    color_1: '#c0c0aa'
+    color_2: '#6ed7d4'
+    color_3: '#1cefff'
 
 #! ---------------------------------------------------------------
 #! Social Configs
 #! @docs https://aurora.tridiamond.tech/guide/social.html
 #! ---------------------------------------------------------------
 socials:
+  github: 'https://github.com/TriDiamond'
+  twitter: ''
+  stackoverflow: ''
+  weibo: 'https://weibo.com/u/7318914058'
+  zhihu: 'https://www.zhihu.com/people/tridiamond'
+  csdn: 'https://blog.csdn.net/TriDiamond6'
+  juejin: 'https://juejin.cn/user/1873223546578589'
   customs:
   ##! Example:
   ##! --- Using SVG
-  # bilibili:
-  #   icon: http://localhost:4000/svg/bilibili.svg
-  #   link: https://live.bilibili.com/22619211
+    bilibili:
+      icon: /img/bilibili.png
+      link: https://live.bilibili.com/22619211
 
-  ##! --- Using IconFont
-  # baidu:
-  #   icon: iconfont icon-baidu
-  #   link: https://live.bilibili.com/22619211
+    #! --- Using IconFont
+    baidu:
+      icon: iconfont icon-baidu
+      link: https://live.bilibili.com/22619211
 
-  ##! --- Using FontAwesome
-  # book:
-  #   icon: far fa-address-book
-  #   link: https://live.bilibili.com/22619211
+    #! --- Using FontAwesome
+    book:
+      icon: far fa-address-book
+      link: https://live.bilibili.com/22619211
 
 #! ---------------------------------------------------------------
 #! Site Meta Configs
