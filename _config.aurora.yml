@@ -12,11 +12,11 @@ site:
   subtitle: Lucas' Blog
   author: Lucas Zhang
   nick: Failurer
-  description: Over The Hill.
+  description: <p>夜阑卧听风吹雨</p>Over The Hill.
   link: '/'
   language: cn
   multi_language: true
-  logo: /img/avatar.png
+  logo: /img/refrain.jpg
   avatar: /img/refrain.jpg
   beian:
     number: '114514'
@@ -83,29 +83,25 @@ theme:
 #! @docs https://aurora.tridiamond.tech/guide/social.html
 #! ---------------------------------------------------------------
 socials:
-  github: 'https://github.com/TriDiamond'
-  twitter: ''
-  stackoverflow: ''
-  weibo: 'https://weibo.com/u/7318914058'
-  zhihu: 'https://www.zhihu.com/people/tridiamond'
-  csdn: 'https://blog.csdn.net/TriDiamond6'
-  juejin: 'https://juejin.cn/user/1873223546578589'
+  github: 'https://github.com/FailureJack'
   customs:
   ##! Example:
   ##! --- Using SVG
     bilibili:
-      icon: /img/bilibili.png
-      link: https://live.bilibili.com/22619211
-
-    #! --- Using IconFont
-    baidu:
-      icon: iconfont icon-baidu
-      link: https://live.bilibili.com/22619211
-
-    #! --- Using FontAwesome
-    book:
-      icon: far fa-address-book
-      link: https://live.bilibili.com/22619211
+      icon: /svg/bilibili.svg
+      link: https://space.bilibili.com/13432006?spm_id_from=333.337.0.0
+    
+    zhihu:
+      icon: /svg/zhihu.svg
+      link: https://www.zhihu.com/people/failurer
+    
+    gitee:
+      icon: /svg/gitee.svg
+      link: https://gitee.com/failurejack
+    
+    leetcode:
+      icon: /svg/leetcode.svg
+      link: https://leetcode.cn/u/failurer/
 
 #! ---------------------------------------------------------------
 #! Site Meta Configs
@@ -113,7 +109,7 @@ socials:
 #! ---------------------------------------------------------------
 site_meta:
   cdn: cn
-  favicon:
+  favicon: \img\avatar.png
   description: ''
   keywords: ''
   author: ''
