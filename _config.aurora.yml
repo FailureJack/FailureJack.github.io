@@ -55,7 +55,6 @@ menu:
   About: true
   Tags: true
   Archives: true
-  Friends: true
   Links: true
 
   contact:
@@ -70,7 +69,7 @@ menu:
 #! @docs https://aurora.tridiamond.tech/guide/theme.html
 #! ---------------------------------------------------------------
 theme:
-  dark_mode: true
+  dark_mode: 'auto'
   profile_shape: rounded # support `circle`, `diamond`, `rounded`
   feature: true
   gradient:
@@ -110,9 +109,9 @@ socials:
 site_meta:
   cdn: cn
   favicon: \img\avatar.png
-  description: ''
-  keywords: ''
-  author: ''
+  description: 'My Blog'
+  keywords: 'Blog'
+  author: 'Lucas Zhang'
 
 #! ---------------------------------------------------------------
 #! Plugins
@@ -121,7 +120,7 @@ site_meta:
 
 # For local development only!
 gitalk:
-  enable: true
+  enable: false
   autoExpand: true
   clientID: ''
   clientSecret: ''
@@ -137,9 +136,9 @@ gitalk:
 # Valine comment plugin (recommended!)
 # see https://valine.js.org/quickstart.html
 valine:
-  enable: false
-  app_id:
-  app_key:
+  enable: true
+  app_id: OE76QB3rEF5djgeUwaOxyPpF-gzGzoHsz
+  app_key: YOQ1uPdae5DXsyiFpCG59qvU
   avatar: ''
   placeholder: Leave your thoughts behind~
   visitor: true
@@ -147,8 +146,10 @@ valine:
   avatarForce: false
   meta: ['nick', 'mail']
   requiredFields: ['nick', 'mail']
-  admin: '' # admin username
+  admin: 'LucasZhang' # admin username
   recentComment: true
+  highlight: true
+  recordIP: true
 
 # Twikoo comment plugin
 # see https://twikoo.js.org/quick-start.html
@@ -164,7 +165,7 @@ twikoo:
 waline:
   enable: false
   recentComment: true
-  reaction: false
+  reaction: true
   login: 'disable'
   meta: ['nick', 'mail']
   requiredMeta: ['nick', 'mail']
@@ -177,7 +178,7 @@ waline:
 # Enable Busuanzi statistic plugin
 # see http://ibruce.info/2015/04/04/busuanzi/
 busuanzi:
-  enable: false
+  enable: true
 
 copy_protection:
   enable: true
