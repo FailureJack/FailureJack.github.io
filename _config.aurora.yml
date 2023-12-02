@@ -57,13 +57,6 @@ menu:
   Archives: true
   Links: true
 
-  contact:
-    name: 'Contact'
-    i18n:
-      zh-CN: '联系我'
-      en: 'Contact'
-    path: 'https://failurejack.github.io/resume/'
-
 #! ---------------------------------------------------------------
 #! Theme Config
 #! @docs https://aurora.tridiamond.tech/guide/theme.html
@@ -73,9 +66,9 @@ theme:
   profile_shape: rounded # support `circle`, `diamond`, `rounded`
   feature: true
   gradient:
-    color_1: '#c0c0aa'
-    color_2: '#6ed7d4'
-    color_3: '#1cefff'
+    color_1: '#c5e7f1'
+    color_2: '#79ceed'
+    color_3: '#1CA6AF'
 
 #! ---------------------------------------------------------------
 #! Social Configs
@@ -139,7 +132,7 @@ valine:
   enable: true
   app_id: OE76QB3rEF5djgeUwaOxyPpF-gzGzoHsz
   app_key: YOQ1uPdae5DXsyiFpCG59qvU
-  avatar: ''
+  avatar: 'monsterid'
   placeholder: Leave your thoughts behind~
   visitor: true
   lang: en
@@ -213,16 +206,15 @@ injects:
 #! ---------------------------------------------------------------
 #! Footer links
 #! ---------------------------------------------------------------
-footer_links:
-  - title: # main title
-    links:
-      - title: # link title
-        url: # URL link
-      - title: # link title
-        url: # URL link
-      - title: Friends # link of friends mode / 友链模式
-        mode: 'links'
-
+# footer_links:
+#   - title: Support 网站支持
+#     links:
+#       - title: LeanCloud 云数据库
+#         url: https://console.leancloud.cn/
+#       - title: Valine 无后端评论系统
+#         url: https://valine.jg/
+#       - title: Hexo-Aurora 极光主题仓库
+#         url: https://github.com/auroral-ui/hexo-theme-aurora
 #! ---------------------------------------------------------------
 #! Highlighter Shiki
 #! ---------------------------------------------------------------

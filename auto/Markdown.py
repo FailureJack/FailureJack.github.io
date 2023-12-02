@@ -73,10 +73,11 @@ class Markdown:
         
         return res
 
-    def __init__(self, title=None, cover=None, date=None, abstract=None, categories=None, tags=None, content=None, static=None):
+    def __init__(self, title=None, cover=None, date=None, comments=True, abstract=None, categories=None, tags=None, content=None, static=None):
         self._title = title
         self._cover = cover
         self._date = date
+        self._comments = comments
         self._abstract = abstract
         self._categories = categories
         self._tags = tags
@@ -86,6 +87,10 @@ class Markdown:
         if self._content is not None and self._title is None:
             self.set_title()
 
+    # name format: {action}_{object}
+    # action format:
+    
+    # title processing
     def extract_title(self):
         pattern = r'^#\s+(.*)'  # 匹配以#开头的行，并提取标题内容
         match = re.search(pattern, self._content, re.MULTILINE)
@@ -94,20 +99,32 @@ class Markdown:
         else:
             return None
 
+    def fix_invalid_title(self):
+        return self._title.replace(": ", ":")
+
     def set_title(self):
         self._title = self.extract_title()
 
+    # local img processing
     def replace_local_img_link(self):
         # 使用正则表达式替换图片链接
         def replace_image_link(match):
             image_path = match.group(1)  # 获取图片路径
             image_name = image_path.split('/')[-1]  # 提取图片文件名
-            new_image_tag = f'<p align="center"><img src="/img/{self._title}/{image_name}" ></p>'  # 构建新的HTML标签
+            new_image_tag = f'<p align="center"><img src="/img/{self.fix_invalid_path(self._title)}/{image_name}" ></p>'  # 构建新的HTML标签
             return new_image_tag
 
         # 使用正则表达式替换图片链接
         self._content = re.sub(r'!\[.*?\]\((.*?)\)', replace_image_link, self._content)
 
+    def fix_invalid_path(self, path):
+        invalid_chars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|']
+        for char in invalid_chars:
+            directory_name = re.sub(rf'(?<!\s){re.escape(char)}|{re.escape(char)}(?!\s)', ' ', directory_name)
+            path = path.replace(char, ' ')
+        return path
+
+    # content processing
     def filter_content(self):
         # 过滤代码块
         code_block_pattern = r'```[\s\S]*?```'  # 匹配代码块
@@ -121,34 +138,38 @@ class Markdown:
         content = re.sub(latex_pattern, '', content, flags=re.DOTALL)
         return content
 
+    # generate front
     def generate_front(self):
 
         return  "---\n"\
                 "title: {title}\n"\
                 "cover: {cover}\n"\
                 "date: {date}\n"\
+                "comments: {comments}\n"\
                 "abstracts: {abstracts}\n"\
                 "mathjax: true\n"\
                 "categories: {categories}\n"\
                 "tags:\n{tags}\n"\
                 "---\n".format(
-                    title=self._title,
+                    title=self.fix_invalid_title(),
                     cover=self._cover,
                     date=self._date,
+                    comments=self._comments,
                     abstracts=self._abstract,
                     categories=self._categories,
                     tags="\n".join(["- " + tag for tag in self._tags])
                 )
     
-    def save_md(self, path):  
+    def save(self, path):  
         self._date = datetime.now()
         self.replace_local_img_link()
 
         # 在文件头添加字符串
         new_content = self.generate_front() + self._content
-
-        path_file = os.path.join(path, self._title + '.md')
-        path_dir = os.path.join('../source/img', self._title)
+        
+        valid_title = self.fix_invalid_path(self._title)
+        path_file = os.path.join(path, valid_title + '.md')
+        path_dir = os.path.join('../source/img', valid_title)
 
         # 将修改后的内容保存为新的Markdown文件
         with open(path_file, 'w', encoding = 'utf-8') as file:
@@ -181,6 +202,14 @@ class Markdown:
     @date.setter
     def date(self, value):
         self._date = value
+    
+    @property
+    def comments(self):
+        return self._comments
+
+    @comments.setter
+    def comments(self, value):
+        self._comments = value
 
     @property
     def abstract(self):

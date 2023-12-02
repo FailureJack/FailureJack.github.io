@@ -24,7 +24,7 @@ class ChatGLM:
         if len(hist) == 0:
             _, hist = self.read_md(md)
         
-        demand = '针对上面的markdown文章写50字中文摘要：' 
+        demand = '针对上面的markdown文章写50字中文摘要，注意保证摘要的字数不多于50个中文汉字：' 
         return self._model.chat(self._tokenizer, demand, history=hist)
     
     def extract_category(self, md, hist=[]):

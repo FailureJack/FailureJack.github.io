@@ -34,17 +34,18 @@ if __name__ == '__main__':
 
     # finish pic gen and cp
     for obj in md_objects:
-        img_path = os.path.join(cover_path, obj.title + '.png')
+        valid_title = obj.fix_invalid_path(obj.title)
+        img_path = os.path.join(cover_path, valid_title + '.png')
         if os.path.exists(img_path):
-            obj.cover = '/cover/'+obj.title+'.png'
+            obj.cover = '/cover/'+valid_title+'.png'
             continue
 
         for image in sd.generate_imgs():
             image.save(img_path)
-            obj.cover = '/cover/'+obj.title+'.png'
+            obj.cover = '/cover/'+valid_title+'.png'
 
     # finish everything's cp
     for obj in md_objects:
-        obj.save_md('../source/_posts')
+        obj.save('../source/_posts')
 
     # call hexo command to upload
