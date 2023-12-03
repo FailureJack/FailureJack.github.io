@@ -100,6 +100,8 @@ class Markdown:
             return None
 
     def fix_invalid_title(self):
+        if not self._title[0].isalnum():
+            return self._title[1:].replace(": ", ":")
         return self._title.replace(": ", ":")
 
     def set_title(self):
@@ -138,7 +140,10 @@ class Markdown:
         content = re.sub(latex_pattern, '', content, flags=re.DOTALL)
         return content
 
-    # generate front
+    # front
+    def extract_front(self):
+        pass
+
     def generate_front(self):
 
         return  "---\n"\

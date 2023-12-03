@@ -3,7 +3,7 @@ title: Hello World
 cover: /cover/hello-world.png
 date: 2023/7/13 20:46:25
 comments: True
-abstracts: "分享我的经验和曾经遇到的问题" # 120个字好像是极限了，应该更少，推荐50字左右
+abstracts: 分享我的经验和曾经遇到的问题,120个字好像是极限了，应该更少，推荐50字左右
 categories: Test
 tags:
 - Hello World
@@ -51,7 +51,7 @@ More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 由于每个md文档需要在首部生成一个特定格式的front，以供框架识别文章的元信息，包括标题、关键字、摘要、更新时间等等。
 如果用户仅仅是想要快速迁移博客，不想要自定义front，可以由auto.py脚本自动生成；
 
-同时如果用户想要自定义front，本框架依然允许，需要用户按照指定格式提前写入文件内，最好直接写在文件头，后面框架的处理会参考用户自定的front
+同时如果用户想要自定义front，本框架依然允许，需要用户按照指定格式提前写入文件头，后面框架的处理会参考用户自定的front
 
 ## 这是一个页面内跳转的示例
 
