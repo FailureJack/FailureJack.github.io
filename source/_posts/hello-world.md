@@ -3,6 +3,7 @@ title: Hello World
 cover: /cover/hello-world.png
 date: 2023/7/13 20:46:25
 comments: True
+feature: False
 abstracts: 分享我的经验和曾经遇到的问题,120个字好像是极限了，应该更少，推荐50字左右
 categories: Test
 tags:

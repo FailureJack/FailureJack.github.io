@@ -4,8 +4,15 @@ import io
 import base64
 from PIL import Image
 import random
+from abc import abstractmethod, ABCMeta
 
-class StableDiffusion:
+def picGen(metaclass=ABCMeta):
+
+    @abstractmethod
+    def generate_imgs(self):
+        pass
+
+class StableDiffusion(picGen):
     
     def __init__(self, web_url="http://127.0.0.1:7860", payload=None):
         self._web_url = web_url

@@ -1,7 +1,26 @@
 from transformers import AutoTokenizer, AutoModel
 from Markdown import Categories
+from abc import abstractmethod, ABCMeta
 
-class ChatGLM:
+def mdReader(metaclass=ABCMeta):
+
+    @abstractmethod
+    def read_md(self, md, hist=[]):
+        pass
+
+    @abstractmethod
+    def extract_keyword(self, md, hist=[]):
+        pass
+
+    @abstractmethod
+    def extract_abstract(self, md, hist=[]):
+        pass
+
+    @abstractmethod
+    def extract_category(self, md, hist=[]):
+        pass
+
+class ChatGLM(mdReader):
     def __init__(self, model_path):
         self._model_path = model_path
         self._tokenizer = AutoTokenizer.from_pretrained(self._model_path, trust_remote_code=True)
