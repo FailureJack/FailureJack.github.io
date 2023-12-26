@@ -6,33 +6,43 @@ from PIL import Image
 import random
 from abc import abstractmethod, ABCMeta
 
-def picGen(metaclass=ABCMeta):
+def PicGen(metaclass=ABCMeta):
 
     @abstractmethod
     def generate_imgs(self):
         pass
 
-class StableDiffusion(picGen):
+def CoverGen(PicGen):
+
+    def __init__(self):
+        self._payload = {
+            "enable_hr": True,
+            "hr_scale": 2,
+            "width": 640,
+            "height": 360,
+        }
+    @abstractmethod
+    def generate_imgs(self):
+        pass
+
+class StableDiffusion(CoverGen):
     
     def __init__(self, web_url="http://127.0.0.1:7860", payload=None):
         self._web_url = web_url
         
         if payload is None:
-            self._payload = {
-                "enable_hr": True,
+            self._payload.update({
                 "denoising_strength": 0.6,
-                "hr_scale": 2,
                 "hr_upscaler": "Latent",
                 "hr_second_pass_steps": 20,
+                
                 "prompt": "masterpiece, best quality, ultra-detailed, illustration, portrait, 1girl",     #  提示词
                 "seed": 4285880275,
                 "sampler_name": "DPM++ 2M Karras",
                 "steps": 20,
                 "cfg_scale": 7,
-                "width": 640,
-                "height": 360,
                 "negative_prompt": "lowres, ((bad anatomy)), ((bad hands)), text, missing finger, extra digits, fewer digits, blurry, ((mutated hands and fingers)), (poorly drawn face), ((mutation)), ((deformed face)), (ugly), ((bad proportions)), ((extra limbs)), extra face, (double head), (extra head), ((extra feet)), monster, logo, cropped, worst quality, low quality, normal quality, jpeg, humpbacked, long body, long neck, ((jpeg artifacts)), hands up",     #  负面提示词
-            }
+            })
         else:
             self._payload = payload
 
@@ -51,6 +61,7 @@ class StableDiffusion(picGen):
         
         return ans
     
+    #region setter&getter
     @property
     def web_url(self):
         return self._web_url
@@ -66,3 +77,4 @@ class StableDiffusion(picGen):
     @payload.setter
     def payload(self, value):
         self._payload = value
+    #endregion setter&getter

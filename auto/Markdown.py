@@ -1,5 +1,14 @@
+'''
+先将本markdown定位为适用与私人自动化发布文章，暂不考虑各种异常情况，
+1. 发布时一定会提供文章所在的路径，该路径保证真实存在
+2. 上述路径下的文件一定符合预定要求结构，每个md都存在对应的static文件夹
+3. 每个md都为一般正常书写博客，都有实际内容
+4. 无法保证的是每个md的头是正确书写的，仅解析能够识别的部分，不能解析的使用None或者空（字符串、列表）代替
+5. 类中设计的函数仅考虑在本项目中调用的情况，不用考虑别其他代码调用的情况
+'''
 from enum import Enum, unique
 from datetime import datetime
+import platform
 import re, os
 import shutil
 from PIL import Image
@@ -37,7 +46,7 @@ class Categories(Enum):
         return '，'.join(Categories.list_n())
 
 class Front:
-    def __init__(self, title=None, cover=None, date=None, comments=True, feature=False, abstracts=None, categories=None, tags=None):
+    def __init__(self, title = None, cover=None, date=None, comments=True, feature=False, abstracts=None, categories=None, tags=None):
         self._title = title
         self._cover = cover
         self._date = date
@@ -57,8 +66,27 @@ class Front:
             raise ValueError('Invalid boolean value!')
 
     @classmethod                
+    def parse_datetime(cls, s):
+        # all allowed format
+        datetimePatterns = [
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d",
+            "%Y/%m/%d",
+            "%Y年%m月%d日",
+            "%Y %m %d"
+        ]
+        for p in datetimePatterns:
+            try:
+                return datetime.strptime(s, p)
+            except ValueError:
+                pass
+
+    @classmethod                
     def filter_invalid_char(cls, s):
+        # 1. character ':' with a space follow would cause parse exception
         s = s.replace(": ", ":")
+
+        # 2. a unclosed str would lead to 'full text string'
         i = 0
         while i < len(s) and (s[i] == "'" or s[i] == '"'):
             if s[i] == "'" and s.find("'", i + 1) != -1:
@@ -67,7 +95,9 @@ class Front:
                 break
             i += 1
 
-        return s[i:] if i < len(s) else None
+        s = s[i:] if i < len(s) else ''
+
+        return s
 
     @classmethod
     def parse_front(cls, content):
@@ -77,7 +107,7 @@ class Front:
         match = re.search(pattern, content, re.DOTALL)
 
         if not match:
-            return
+            return obj
         
         lines = match.group(1).split('\n')
 
@@ -89,84 +119,64 @@ class Front:
             
             try:
                 if key == 'title':
-                    obj._title = obj.filter_invalid_char(value)
+                    obj.title = Front.filter_invalid_char(value)
                 elif key == 'abstracts':
-                    obj._abstracts = obj.filter_invalid_char(value)
+                    obj.abstracts = Front.filter_invalid_char(value)
                 elif key == 'categories':
-                    obj._categories = obj.filter_invalid_char(value)
+                    obj.categories = Front.filter_invalid_char(value)
 
                 elif key == 'cover':
+                    # user should write the correct path, absolute path recom
                     _ = Image.open(value)
-                    obj._cover = value
+                    obj.cover = value
 
                 elif key == 'comments':
-                    obj._comments = obj.parse_boolean(value)
+                    obj.comments = Front.parse_boolean(value)
                 elif key == 'feature':
-                    obj._feature = obj.parse_boolean(value)
-
+                    obj.feature = Front.parse_boolean(value)
                 elif key == 'date':
-                    datetimePatterns = [
-                        "%Y-%m-%d %H:%M:%S",
-                        "%Y-%m-%d",
-                        "%Y/%m/%d",
-                        "%Y年%m月%d日",
-                        "%Y %m %d"
-                    ]
-                    for p in datetimePatterns:
-                        try:
-                            obj._date = datetime.strptime(value, p)
-                        
+                    obj.date = Front.parse_datetime(value)
 
                 elif key == 'tags':
-                    tags = []
-                    i += 1
-                    while i < len(lines) and lines[i].find('-') != -1:
-                        tags.append(lines[i][lines[i].find('-') + 1:].strip())
+                    obj.tags = []
+                    while i + 1 < len(lines) and lines[i + 1].strip()[0] == '-':
+                        tag = lines[i][lines[i].find('-') + 1].strip()
+                        obj.tags.append(Front.filter_invalid_char(tag))
                         i += 1
-                    if len(tags) > 0:
-                        obj._tags = tags         
             except Exception as e:
                 print(e)            
             finally:
                 i += 1
         
         return obj
-
-    def verify_front(self):
-        return  self._title is not None and \
-                self._cover is not None and \
-                self._date is not None and \
-                self._comments is not None and \
-                self._feature is not None and \
-                self._abstracts is not None and \
-                self._categories is not None and \
-                self._tags is not None and len(self._tags) > 0
     
     def generate_front(self):
         if not self.verify_front():
             return None
-        
-        return  "---\n"\
-                "title: {title}\n"\
-                "cover: {cover}\n"\
-                "date: {date}\n"\
-                "comments: {comments}\n"\
-                "feature: {feature}\n"\
-                "abstracts: {abstracts}\n"\
-                "mathjax: true\n"\
-                "categories: {categories}\n"\
-                "tags:\n{tags}\n"\
-                "---\n".format(
-                    title=self.fix_invalid_title(),
-                    cover=self._cover,
-                    date=self._date.strftime('%Y-%m-%d %H:%M:%S'),
-                    comments=self._comments,
-                    feature=self._feature,
-                    abstracts=self._abstracts,
-                    categories=self._categories,
-                    tags="\n".join(["- " + tag for tag in self._tags])
-                )
+        resA = "---\n"
+        resB = "mathjax: true\n---\n"
 
+        if self._title.bool():
+            resA += "title: " + self._title + "\n"
+        elif self._cover.bool():
+            resA += "cover: " + self._cover + "\n"
+        elif self._date.bool():
+            resA += "date: " + self._date.strftime('%Y-%m-%d %H:%M:%S') + "\n"
+        elif self._comments is not None:
+            resA += "comments: " + self._comments + "\n"
+        elif self._feature is not None:
+            resA += "feature: " + self._feature + "\n"
+        elif self._abstracts.bool():
+            resA += "abstracts: " + self._abstracts + "\n"
+        elif self._categories.bool():
+            resA += "categories: " + self._categories + "\n"
+        elif self._tags.bool():
+            taglist = "\n".join(["- " + tag for tag in self._tags])
+            resA += "tags:\n" + taglist + "\n"
+        
+        return resA + resB
+    
+    #region setter&getter
     @property
     def title(self):
         return self._title
@@ -230,6 +240,7 @@ class Front:
     @tags.setter
     def tags(self, value):
         self._tags = value
+    #endregion
 
 class Markdown():
     
@@ -274,26 +285,16 @@ class Markdown():
         self._static = static
         self._front = Front.parse_front(content)
 
-        if self._content is None:
-            self._title = None
-        elif self._front._title is not None:
+        if self._front._title:
             self._title = self.filter_invalid_path(self._front._title)
         else:
             self._front._title = self._front.filter_invalid_char(self.extract_title())
             self._title = self.filter_invalid_path(self._front._title)
-
-    # def __init__(self, title=None, cover=None, date=None, comments=True, feature=False, abstract=None, categories=None, tags=None, content=None, static=None):
-    #     # 默认此接口下传的数据都是正确的
-    #     self._front = Front(title, cover, date, comments, feature, abstract, categories, tags)
-    #     self._content = content
-    #     self._static = static
-    #     self._title = title
-
-    #     if self._content is not None and self._front._title is None:
-    #         self.set_title()
         
     # title processing
     def extract_title(self):
+        #TODO: assume there is and only one H1 and won't be null str
+        # 如果没有H1，选择第一个H最高的那级标题作为标题，如果没有H开头的，让gpt拟一个标题
         pattern = r'^#\s+(.*)'  # 匹配以#开头的行，并提取标题内容
         match = re.search(pattern, self._content, re.MULTILINE)
         if match:
@@ -304,22 +305,27 @@ class Markdown():
     # local img processing
     def replace_local_img_link(self):
         # 使用正则表达式替换图片链接
-        def replace_image_link(match):
+        def replace_img_link(match):
             image_path = match.group(1)  # 获取图片路径
             image_name = image_path.split('/')[-1]  # 提取图片文件名
-            new_image_tag = f'<p align="center"><img src="/img/{self._title}/{image_name}" ></p>'  # 构建新的HTML标签
+            # 构建新的HTML标签
+            new_image_tag = f'<p align="center"><img src="/img/{self._title}/{image_name}" ></p>'
             return new_image_tag
 
         # 使用正则表达式替换图片链接
-        self._content = re.sub(r'!\[.*?\]\((.*?)\)', replace_image_link, self._content)
+        self._content = re.sub(r'!\[.*?\]\((.*?)\)', replace_img_link, self._content)
 
     # filepath processing
     def filter_invalid_path(self, path):
-        invalid_chars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|']
-        for char in invalid_chars:
-            directory_name = re.sub(rf'(?<!\s){re.escape(char)}|{re.escape(char)}(?!\s)', ' ', directory_name)
-            path = path.replace(char, ' ')
-        return path
+        sysstr = platform.system()
+        if sysstr =="Windows":
+            pattern=r'[\\/:*?"<>|\r\n]+'
+        elif sysstr == "Linux":
+            print ("Call Linux tasks")
+        elif sysstr == "Darwin":
+            print ("Call Mac tasks")
+        
+        return re.sub(pattern, '', path)#去掉非法字符  
 
     # content processing
     def filter_content(self):
@@ -331,21 +337,23 @@ class Markdown():
         link_pattern = r'\[.*?\]\(.*?\)'  # 匹配链接
         content = re.sub(link_pattern, '', content)
 
-        # 匹配公式
+        # 过滤公式
         latex_pattern = r'(\$\$).*?(\$\$)|(\$).*?(\$)'
         content = re.sub(latex_pattern, '', content, flags=re.DOTALL)
+        
         return content
     
-    def save(self, path):  
-        self._date = datetime.now()
+    def save(self, path):
+        if not self._date.bool():
+            self._date = datetime.now()
+        
         self.replace_local_img_link()
 
         # 在文件头添加字符串
         new_content = self._front.generate_front() + self._content
         
-        valid_title = self.fix_invalid_path(self._title)
-        path_file = os.path.join(path, valid_title + '.md')
-        path_dir = os.path.join('../source/img', valid_title)
+        path_file = os.path.join(path, self._title + '.md')
+        path_dir = os.path.join('../source/img', self._title)
 
         # 将修改后的内容保存为新的Markdown文件
         with open(path_file, 'w', encoding = 'utf-8') as file:
@@ -355,6 +363,7 @@ class Markdown():
             shutil.rmtree(path_dir)
         shutil.copytree(self._static, path_dir)
 
+    #region setter&getter
     @property
     def content(self):
         return self._content
@@ -378,3 +387,4 @@ class Markdown():
     @title.setter
     def title(self, value):
         self._title = value
+    #endregion
