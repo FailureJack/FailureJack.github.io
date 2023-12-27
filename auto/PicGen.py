@@ -4,34 +4,19 @@ import io
 import base64
 from PIL import Image
 import random
-from abc import abstractmethod, ABCMeta
 
-def PicGen(metaclass=ABCMeta):
-
-    @abstractmethod
-    def generate_imgs(self):
-        pass
-
-def CoverGen(PicGen):
-
-    def __init__(self):
-        self._payload = {
-            "enable_hr": True,
-            "hr_scale": 2,
-            "width": 640,
-            "height": 360,
-        }
-    @abstractmethod
-    def generate_imgs(self):
-        pass
-
-class StableDiffusion(CoverGen):
+class StableDiffusion:
     
     def __init__(self, web_url="http://127.0.0.1:7860", payload=None):
         self._web_url = web_url
         
         if payload is None:
-            self._payload.update({
+            self._payload = {
+                "enable_hr": True,
+                "hr_scale": 2,
+                "width": 640,
+                "height": 360,
+
                 "denoising_strength": 0.6,
                 "hr_upscaler": "Latent",
                 "hr_second_pass_steps": 20,
@@ -42,7 +27,7 @@ class StableDiffusion(CoverGen):
                 "steps": 20,
                 "cfg_scale": 7,
                 "negative_prompt": "lowres, ((bad anatomy)), ((bad hands)), text, missing finger, extra digits, fewer digits, blurry, ((mutated hands and fingers)), (poorly drawn face), ((mutation)), ((deformed face)), (ugly), ((bad proportions)), ((extra limbs)), extra face, (double head), (extra head), ((extra feet)), monster, logo, cropped, worst quality, low quality, normal quality, jpeg, humpbacked, long body, long neck, ((jpeg artifacts)), hands up",     #  负面提示词
-            })
+            }
         else:
             self._payload = payload
 

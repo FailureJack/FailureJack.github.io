@@ -100,16 +100,22 @@ class Front:
         return s
 
     @classmethod
-    def parse_front(cls, content):
-        obj = Front()
+    def match_front(cls, content):
         # 定义正则表达式模式
         pattern = r'---\n(.*?)\n---'
         match = re.search(pattern, content, re.DOTALL)
-
         if not match:
+            return ""
+        return match.group(1)
+    
+    @classmethod
+    def parse_front(cls, match_content):
+        obj = Front()
+        
+        if not match_content:
             return obj
         
-        lines = match.group(1).split('\n')
+        lines = match_content.split('\n')
 
         i = 0
         while(i < len(lines)):
@@ -151,26 +157,24 @@ class Front:
         return obj
     
     def generate_front(self):
-        if not self.verify_front():
-            return None
         resA = "---\n"
         resB = "mathjax: true\n---\n"
 
-        if self._title.bool():
+        if self._title:
             resA += "title: " + self._title + "\n"
-        elif self._cover.bool():
+        if self._cover:
             resA += "cover: " + self._cover + "\n"
-        elif self._date.bool():
+        if self._date:
             resA += "date: " + self._date.strftime('%Y-%m-%d %H:%M:%S') + "\n"
-        elif self._comments is not None:
-            resA += "comments: " + self._comments + "\n"
-        elif self._feature is not None:
-            resA += "feature: " + self._feature + "\n"
-        elif self._abstracts.bool():
+        if self._comments is not None:
+            resA += "comments: " + str(self._comments) + "\n"
+        if self._feature is not None:
+            resA += "feature: " + str(self._feature) + "\n"
+        if self._abstracts:
             resA += "abstracts: " + self._abstracts + "\n"
-        elif self._categories.bool():
+        if self._categories:
             resA += "categories: " + self._categories + "\n"
-        elif self._tags.bool():
+        if self._tags:
             taglist = "\n".join(["- " + tag for tag in self._tags])
             resA += "tags:\n" + taglist + "\n"
         
@@ -218,12 +222,12 @@ class Front:
         self._feature = value
 
     @property
-    def abstract(self):
-        return self._abstract
+    def abstracts(self):
+        return self._abstracts
 
-    @abstract.setter
-    def abstract(self, value):
-        self._abstract = value
+    @abstracts.setter
+    def abstracts(self, value):
+        self._abstracts = value
 
     @property
     def categories(self):
@@ -281,15 +285,16 @@ class Markdown():
         return res
 
     def __init__(self, content, static):
-        self._content = content
         self._static = static
-        self._front = Front.parse_front(content)
+        temp_content = Front.match_front(content)
+        self._front = Front.parse_front(temp_content)
+        self._content = re.sub('---\n' + temp_content + '\n---', '', content)
 
-        if self._front._title:
-            self._title = self.filter_invalid_path(self._front._title)
+        if self._front.title:
+            self._title = self.filter_invalid_path(self._front.title)
         else:
-            self._front._title = self._front.filter_invalid_char(self.extract_title())
-            self._title = self.filter_invalid_path(self._front._title)
+            self._front.title = self._front.filter_invalid_char(self.extract_title())
+            self._title = self.filter_invalid_path(self._front.title)
         
     # title processing
     def extract_title(self):
@@ -344,8 +349,8 @@ class Markdown():
         return content
     
     def save(self, path):
-        if not self._date.bool():
-            self._date = datetime.now()
+        if not self._front.date:
+            self._front.date = datetime.now()
         
         self.replace_local_img_link()
 
@@ -387,4 +392,12 @@ class Markdown():
     @title.setter
     def title(self, value):
         self._title = value
+    
+    @property
+    def front(self):
+        return self._front
+
+    @front.setter
+    def front(self, value):
+        self._front = value
     #endregion
