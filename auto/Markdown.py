@@ -119,11 +119,11 @@ class Front:
 
         i = 0
         while(i < len(lines)):
-            key, value = lines[i].split(':', 1)
-            key = key.strip()
-            value = value.strip()
-            
             try:
+                key, value = lines[i].split(':', 1)
+                key = key.strip()
+                value = value.strip()
+                
                 if key == 'title':
                     obj.title = Front.filter_invalid_char(value)
                 elif key == 'abstracts':
@@ -146,9 +146,12 @@ class Front:
                 elif key == 'tags':
                     obj.tags = []
                     while i + 1 < len(lines) and lines[i + 1].strip()[0] == '-':
-                        tag = lines[i][lines[i].find('-') + 1].strip()
-                        obj.tags.append(Front.filter_invalid_char(tag))
                         i += 1
+                        tag = lines[i][lines[i].find('-') + 1:].strip()
+                        tag = Front.filter_invalid_char(tag)
+                        if tag: 
+                            obj.tags.append(tag)
+                        
             except Exception as e:
                 print(e)            
             finally:
@@ -288,7 +291,7 @@ class Markdown():
         self._static = static
         temp_content = Front.match_front(content)
         self._front = Front.parse_front(temp_content)
-        self._content = re.sub('---\n' + temp_content + '\n---', '', content)
+        self._content = re.sub('---\n' + temp_content + '\n---\n', '', content)
 
         if self._front.title:
             self._title = self.filter_invalid_path(self._front.title)

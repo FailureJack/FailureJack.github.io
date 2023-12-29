@@ -15,7 +15,9 @@ if __name__ == '__main__':
     # get the reader
     # chatGLM_model_path = 'D:\\ChatGLM3\\chatglm3-6b-32k'
     # reader = ChatGLM3_LocalCode(chatGLM_model_path)
-    reader = ChatGLM3_OpenAI()
+    # web_url = "http://localhost:8000/v1"
+    web_url = "http://10.77.110.155:8000/v1"
+    reader = ChatGLM3_OpenAI(web_url=web_url)
     for obj in md_objects:
         
         # _, history = reader.read_md(obj.filter_content())
@@ -38,8 +40,9 @@ if __name__ == '__main__':
 
     # stable diffusion
     cover_path = '../source/cover/'
-    web_url = 'http://127.0.0.1:7860'
-    sd = StableDiffusion(web_url)
+    # web_url = 'http://127.0.0.1:7860'
+    web_url = 'http://10.77.110.155:7860'
+    sd = StableDiffusion(web_url=web_url, checkpoint="CounterfeitV30_v30.safetensors")
 
     # finish pic gen and cp
     for obj in md_objects:
